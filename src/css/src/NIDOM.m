@@ -126,29 +126,31 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)registerView:(UIView *)view {
-  if (self.parent) {
-    [self.parent registerView:view];
-  }
-  NSString* selector = NSStringFromClass([view class]);
-  [self registerSelector:selector withView:view];
-  
-  NSArray *pseudos = nil;
-  if ([view respondsToSelector:@selector(pseudoClasses)]) {
-    pseudos = (NSArray*) [view performSelector:@selector(pseudoClasses)];
-    if (pseudos) {
-      for (NSString *ps in pseudos) {
-        [self registerSelector:[selector stringByAppendingString:ps] withView:view];
-      }
+    if (![_registeredViews containsObject:view]) {
+        if (self.parent) {
+            [self.parent registerView:view];
+        }
+        NSString* selector = NSStringFromClass([view class]);
+        [self registerSelector:selector withView:view];
+        
+        NSArray *pseudos = nil;
+        if ([view respondsToSelector:@selector(pseudoClasses)]) {
+            pseudos = (NSArray*) [view performSelector:@selector(pseudoClasses)];
+            if (pseudos) {
+                for (NSString *ps in pseudos) {
+                    [self registerSelector:[selector stringByAppendingString:ps] withView:view];
+                }
+            }
+        }
+        
+        [_registeredViews addObject:view];
+        [self refreshStyleForView:view withSelectorName:selector];
+        if (pseudos) {
+            for (NSString *ps in pseudos) {
+                [self refreshStyleForView:view withSelectorName:[selector stringByAppendingString:ps]];
+            }
+        }
     }
-  }
-  
-  [_registeredViews addObject:view];
-  [self refreshStyleForView:view withSelectorName:selector];
-  if (pseudos) {
-    for (NSString *ps in pseudos) {
-      [self refreshStyleForView:view withSelectorName:[selector stringByAppendingString:ps]];
-    }
-  }
 }
 
 - (void)registerView:(UIView *)view withCSSClass:(NSString *)cssClass andId:(NSString *)viewId
