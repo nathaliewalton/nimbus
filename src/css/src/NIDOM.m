@@ -126,7 +126,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)registerView:(UIView *)view {
-    if (![_registeredViews containsObject:view]) {
+    if (view && ![_registeredViews containsObject:view]) {
         if (self.parent) {
             [self.parent registerView:view];
         }
