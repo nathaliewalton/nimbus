@@ -232,7 +232,8 @@
       // We want to find the lowest node in the class hierarchy so that we pick the lowest ancestor
       // in the hierarchy tree.
       if ([keyClass isSubclassOfClass:class]
-          && (nil == superClass || [keyClass isSubclassOfClass:superClass])) {
+          && (nil == superClass || [keyClass isSubclassOfClass:superClass])
+          && (map[class] && ![map[class] isEqual:[NSNull class]])) {
         superClass = class;
       }
     }
